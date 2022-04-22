@@ -8,28 +8,32 @@ import torch
 import data
 from torchsummary import summary
 import argparse
+from torchvision.transforms import Compose, CenterCrop, ToTensor, Resize
+import math
 
 parser = argparse.ArgumentParser(description='Pytorch Cifar-10')
 parser.add_argument('--batch-size', type=int, default = 32, metavar='', help = 'Input batch size for training (default: 32)')
 parser.add_argument('--epochs', type=int, default = 20, metavar='', help = 'Number of epochs to train (default:20)')
 parser.add_argument('--lr', type=float, default = 0.01, metavar='', help = 'Learning rate (default:0.01)')
-parser.add_argument('--model', type=str, default = 'LeNet', metavar='', help = 'Use the Model to train (defaule:LeNet), conclude: LeNet, AlexNet')
+parser.add_argument('--model', type=str, default = 'LeNet', metavar='', help = 'Use the Model to train (defaule:LeNet), conclude: LeNet, AlexNet, VGG, ResNet')
 parser.add_argument('--model-save-path', type=str, default = './model.ckpt', metavar='', help = 'The Model save path (default:./model.ckpt)')
 parser.add_argument('--cuda', default = False, action='store_true', help = 'Weather use cuda to train (default:False)')
+parser.add_argument('--resize', type=int, default = 32, metavar='', help = 'Resize the size of image (default:32)')
 
-def test(path, dataset, batch_size, device, con = 'test'):
+def test(path, dataset, batch_size, device, rsize, con = 'test'):
     test_loader = torch.utils.data.DataLoader(dataset, batch_size = batch_size)
     model = torch.load(path).to(device)
-    loss, acc = test_epoch(model, test_loader, device, con)
+    loss, acc = test_epoch(model, test_loader, device, con, rsize)
     return loss, acc
 
-def test_epoch(model, data_loader, device, con):
+def test_epoch(model, data_loader, device, con, rsize):
     model.eval()
     test_loss = 0
     correct = 0
     losss = torch.nn.CrossEntropyLoss()
     with torch.no_grad():
         for data, target in data_loader:
+            data = rsize(data)
             output = model(data.float().to(device))
             # test_loss += torch.nn.functional.nll_loss(output, target.long().to(device), reduction = 'sum').item()
             test_loss += (losss(output, target.long().to(device)).item() * len(data))
@@ -39,7 +43,7 @@ def test_epoch(model, data_loader, device, con):
         print('{} Loss:{}, Acc:{}/{} ({:.2f}%)'.format(con, test_loss, correct, len(data_loader.dataset), 100. * correct / len(data_loader.dataset)))
     return test_loss, correct / len(data_loader.dataset)
 
-def train(model, device, dataset, batch_size, epochs, test_dataset, lr = 0.001, path = 'LeNet.ckpt'):
+def train(model, device, dataset, batch_size, epochs, test_dataset, rsize, lr = 0.001, path = 'LeNet.ckpt'):
     train_loader = torch.utils.data.DataLoader(dataset, batch_size = batch_size)
     optimizer = torch.optim.Adam(model.parameters(), lr)
     losses = np.inf
@@ -48,26 +52,29 @@ def train(model, device, dataset, batch_size, epochs, test_dataset, lr = 0.001, 
     loss_test = []
     acc_test = []
     for epoch in range(epochs):
-        losses = train_epoch(epoch, model, device, train_loader, optimizer, losses, path)
-        lt, at = test(path, test_dataset, batch_size, device, 'test')
+        losses = train_epoch(epoch, model, device, train_loader, optimizer, losses, path, rsize)
+        lt, at = test(path, test_dataset, batch_size, device, rsize, 'test')
         loss_test.append(lt)
         acc_test.append(at)
-        lt, at = test(path, dataset, batch_size, device, 'train')
+        lt, at = test(path, dataset, batch_size, device, rsize, 'train')
         loss_train.append(lt)
         acc_train.append(at)
     return loss_train, acc_train, loss_test, acc_test
 
-def train_epoch(epoch, model, device, data_loader, optimizer, losses, path):
+def train_epoch(epoch, model, device, data_loader, optimizer, losses, path, rsize):
     model.train()
     all_loss = 0
     losss = torch.nn.CrossEntropyLoss()
     for batch_idx, (data, target) in enumerate(data_loader):
         optimizer.zero_grad()
+        data = rsize(data)
         output = model(data.float().to(device))
         # loss = torch.nn.functional.nll_loss(output, target.long().to(device))
         loss = losss(output, target.long().to(device))
         loss.backward()
         optimizer.step()
+        if batch_idx % 10 == 0:
+            print('Epoch:{}\titers:{}/{}\tLoss:{:.6f}\twith {}'.format(epoch, batch_idx, math.ceil(len(data_loader.dataset) / batch_size), loss.item(), device))
         all_loss += (loss.item() * len(data))
     if all_loss/len(data_loader.dataset) < losses:
         losses = all_loss/len(data_loader.dataset)
@@ -76,13 +83,19 @@ def train_epoch(epoch, model, device, data_loader, optimizer, losses, path):
     return losses
 
 def get_model(model_name, device):
-    assert model_name == 'LeNet' or model_name == 'AlexNet'
+    assert model_name == 'LeNet' or model_name == 'AlexNet' or model_name == 'VGG' or model_name == 'ResNet'
     if model_name == 'LeNet':
         from LeNet import LeNet
         return LeNet().to(device)
     if model_name == 'AlexNet':
         from AlexNet import AlexNet
         return AlexNet().to(device)
+    if model_name == 'VGG':
+        from VGG import VGG
+        return VGG().to(device)
+    if model_name == 'ResNet':
+        from ResNet import ResNet
+        return ResNet(device).to(device)
 
 def get_device(use_cuda):
     device = torch.device("cuda" if use_cuda and torch.cuda.is_available() else "cpu")
@@ -112,11 +125,15 @@ if __name__ == '__main__':
     epochs =args.epochs
     lr = args.lr
     device = get_device(args.cuda)
+    RESIZE=Compose([
+        Resize((args.resize,args.resize))
+    ])
     model = get_model(args.model, device)
     model_save_path = args.model_save_path
-    summary(model, (3,32,32))
+    rsize = args.resize
+    summary(model, (3,rsize,rsize))
     p_time = time.time()
-    loss_train, acc_train, loss_test, acc_test = train(model, device, train_dataset, batch_size, epochs, test_dataset, lr, model_save_path)
+    loss_train, acc_train, loss_test, acc_test = train(model, device, train_dataset, batch_size, epochs, test_dataset, RESIZE, lr, model_save_path)
     print('Use {}s'.format(time.time() - p_time))
     get_loss_show(loss_train, loss_test)
     get_acc_show(acc_train, acc_test)

@@ -7,6 +7,9 @@
 data.py
 Start.py
 LeNet.py
+AlexNet.py
+VGG.py
+ResNet.py
 touch_exercise.py
 ```
 
@@ -34,13 +37,39 @@ touch_exercise.py
 --model-save-path
 # 是否采用cuda运行，默认否，当且仅当改参数为True，且机器支持GPU时可运行cuda
 --cuda
+# 将图片resize为相应的大小，默认为32
+--resize
+```
+
+例如：
+
+```python
+python Start.py --cuda --lr=0.001 --epochs=50 --resize=224 --batch-size=256 --model=ResNet
 ```
 
 
 
 ### LeNet.py
 
-基础的LeNet模型
+基础的LeNet模型，图片大小为32
+
+
+
+## AlexNet
+
+基础的AlexNet，图片大小为224
+
+
+
+## VGG
+
+基础的VGG，图片大小为224
+
+
+
+## ResNet
+
+基础的ResNet， 图片大小为224
 
 
 
