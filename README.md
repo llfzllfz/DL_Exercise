@@ -3,23 +3,34 @@
 
 ## 文件目录
 
-```
-data.py
-Start.py
-LeNet.py
-AlexNet.py
-VGG.py
-ResNet.py
+```python
+CNN
+---data.py
+---Start_CNN.py
+---LeNet.py
+---AlexNet.py
+---VGG.py
+---ResNet.py
+RNN
+---data_rnn.py
+---LSTM.py
+---Start_RNN.py
 touch_exercise.py
 ```
 
 ## 文件说明
 
-### data.py
+### CNN
+
+#### data.py
 
 包含了数据处理模块，目前载入的数据为Cifar-10，需自行下载数据集，同时修改路径
 
-### Start.py
+数据shape为（-1，3，32，32）
+
+范围在0-1之间（/255归一化）
+
+#### Start.py
 
 包含了训练模块和测试模块，支持命令行方式运行
 
@@ -49,30 +60,56 @@ python Start.py --cuda --lr=0.001 --epochs=50 --resize=224 --batch-size=256 --mo
 
 
 
-### LeNet.py
+#### LeNet.py
 
 基础的LeNet模型，图片大小为32
 
+具体见blog：[https://llfzllfz.github.io/2022/04/22/LeNet/#more](https://llfzllfz.github.io/2022/04/22/LeNet/#more)
 
 
-## AlexNet
+
+#### AlexNet.py
 
 基础的AlexNet，图片大小为224
 
 
 
-## VGG
+#### VGG.py
 
 基础的VGG，图片大小为224
 
 
 
-## ResNet
+#### ResNet.py
 
 基础的ResNet， 图片大小为224
 
 
 
-### touch_Exercise(感知机)
+### RNN
+
+#### data_rnn.py
+
+路径需要在文件中重新设置
+
+将数据转换成（-1，32*32，3）并且载入torch中的数据加载中
+
+
+
+#### LSTM.py
+
+使用torch.nn.lstm()+torch.nn.Linear()
+
+
+
+#### Start_RNN.py
+
+包含了训练模块和测试模块，支持命令行方式运行
+
+通过python Start_RNN.py -h获取对应参数得相关信息
+
+
+
+## touch_Exercise(感知机)
 使用的数据集是kaggle上面的house-prices-advanced-regression-techniques数据集，该文件用来熟悉touch的一些基础操作
 
