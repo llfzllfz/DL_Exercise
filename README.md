@@ -16,6 +16,7 @@ RNN
 ---LSTM.py
 ---Start_RNN.py
 touch_exercise.py
+GCN.py
 ```
 
 ## 文件说明
@@ -100,6 +101,8 @@ python Start.py --cuda --lr=0.001 --epochs=50 --resize=224 --batch-size=256 --mo
 
 使用torch.nn.lstm()+torch.nn.Linear()
 
+对Cifar-10数据集进行分类
+
 
 
 #### Start_RNN.py
@@ -110,6 +113,12 @@ python Start.py --cuda --lr=0.001 --epochs=50 --resize=224 --batch-size=256 --mo
 
 
 
-## touch_Exercise(感知机)
+### touch_Exercise(感知机)
 使用的数据集是kaggle上面的house-prices-advanced-regression-techniques数据集，该文件用来熟悉touch的一些基础操作
+
+### GCN.py
+
+使用的是空手道数据集，参考了网上的一些内容（主要是没想到GCN怎么应用到Cifar-10的分类上）
+
+模型采用的是$D^{-\frac{1}{2}}AD^{-\frac{1}{2}}X$
 
