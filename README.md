@@ -15,8 +15,15 @@ RNN
 ---data_rnn.py
 ---LSTM.py
 ---Start_RNN.py
+Transformer
+---bert-fine-tune.py
+---transformer.py
+---transformer_config.py
+---transformer_data.py
+---transformer_test.py
 touch_exercise.py
 GCN.py
+GAT.py
 ```
 
 ## 文件说明
@@ -113,7 +120,34 @@ python Start.py --cuda --lr=0.001 --epochs=50 --resize=224 --batch-size=256 --mo
 
 
 
+### Transformer
+
+#### bert-fine-tune.py
+
+熟悉bert的fine-tune
+
+数据集采用的是IMDB
+
+采用last-hidden-state做fine-tune
+
+#### transformer.py
+
+transformer模型，参考https://wmathor.com/index.php/archives/1455/
+
+#### transformer_config.py
+
+transformer的部分参数设置
+
+#### transformer_data.py
+
+自己构造transformer相关的数据
+
+#### transformer_test.py
+
+测试自己实现的transformer模型
+
 ### touch_Exercise(感知机)
+
 使用的数据集是kaggle上面的house-prices-advanced-regression-techniques数据集，该文件用来熟悉touch的一些基础操作
 
 ### GCN.py
@@ -121,4 +155,8 @@ python Start.py --cuda --lr=0.001 --epochs=50 --resize=224 --batch-size=256 --mo
 使用的是空手道数据集，参考了网上的一些内容（主要是没想到GCN怎么应用到Cifar-10的分类上）
 
 模型采用的是$D^{-\frac{1}{2}}AD^{-\frac{1}{2}}X$
+
+### GAT.py
+
+实现的GAT模型，同样采用空手道数据集做测试
 
