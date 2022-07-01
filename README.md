@@ -21,6 +21,7 @@ Transformer
 ---transformer_config.py
 ---transformer_data.py
 ---transformer_test.py
+---swin_transformer.py
 touch_exercise.py
 GCN.py
 GAT.py
@@ -74,25 +75,17 @@ python Start.py --cuda --lr=0.001 --epochs=50 --resize=224 --batch-size=256 --mo
 
 具体见blog：[https://llfzllfz.github.io/2022/04/22/LeNet/#more](https://llfzllfz.github.io/2022/04/22/LeNet/#more)
 
-
-
 #### AlexNet.py
 
 基础的AlexNet，图片大小为224
-
-
 
 #### VGG.py
 
 基础的VGG，图片大小为224
 
-
-
 #### ResNet.py
 
 基础的ResNet， 图片大小为224
-
-
 
 ### RNN
 
@@ -102,23 +95,17 @@ python Start.py --cuda --lr=0.001 --epochs=50 --resize=224 --batch-size=256 --mo
 
 将数据转换成（-1，32*32，3）并且载入torch中的数据加载中
 
-
-
 #### LSTM.py
 
 使用torch.nn.lstm()+torch.nn.Linear()
 
 对Cifar-10数据集进行分类
 
-
-
 #### Start_RNN.py
 
 包含了训练模块和测试模块，支持命令行方式运行
 
 通过python Start_RNN.py -h获取对应参数得相关信息
-
-
 
 ### Transformer
 
@@ -145,6 +132,38 @@ transformer的部分参数设置
 #### transformer_test.py
 
 测试自己实现的transformer模型
+
+#### swin_transformer.py
+
+源内容：https://github.com/microsoft/Swin-Transformer/blob/main/models/swin_transformer.py
+
+### SSFPN
+
+具体见blog：https://llfzllfz.github.io/2022/06/28/SSFPN/#more
+
+#### data.py
+
+用于数据读取
+
+#### config.py
+
+配置文件
+
+#### predict.py
+
+推理文件
+
+#### SSFPN.py
+
+模型主体文件
+
+#### train.py
+
+训练文件
+
+#### util.py
+
+包含一些需要的函数
 
 ### touch_Exercise(感知机)
 
